@@ -1,0 +1,18 @@
+  key={index}
+              className={` ${
+                active == index && " border-b-2 border-b-yellow-500"
+              } inline-block cursor-pointer  border-b-yellow-500 transition duration-300 ease-in-out hover:border-b-2 hover:text-white`}
+            >
+              {menu}
+            </motion.li>
+          );
+        })}
+        <div className=" flex items-center gap-6">
+          <IoMdSearch className=" text-lg" />
+          <IoMdPerson className=" text-lg" />
+        </div>
+      </ul>
+    </div>
+  );
+}
+

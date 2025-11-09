@@ -1,0 +1,193 @@
+<!-- HONEY POT PAGE  -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DropLet - Cloud Storage</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f7fc;
+    }
+    .navbar {
+      background-color: #007bff;
+      padding: 25px 20px;
+      color: #fff;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    h2 {
+      color: #333;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+    .alert {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .table th, .table td {
+      padding: 12px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    .table th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+    .action-btn {
+      padding: 8px 15px;
+      margin-right: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    .view-btn {
+      background-color: #28a745;
+      color: white;
+    }
+    .view-btn:hover {
+      background-color: #218838;
+    }
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+    .logout-btn {
+      background-color: #f44336;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      transition: background-color 0.3s;
+    }
+    .logout-btn:hover {
+      background-color: #e53935;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    DropLet - Cloud Storage
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </nav>
+  
+  <!-- <div class="container">
+    <div class="alert">
+      <strong>Disclaimer:</strong> This is a honeypot page designed to trap malicious activities. Any unauthorized access will be logged.
+    </div> -->
+    
+    
+    <h2>Your Files</h2>
+  <table class="table" id="file-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>File Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Document1.txt</td>
+        <td>
+          <button class="action-btn view-btn" onclick="viewFile('Document1.txt')">View</button>
+          <button class="action-btn delete-btn" onclick="deleteFile('Document1.txt', this)">Delete</button>
+        </td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Photo1.jpg</td>
+        <td>
+          <button class="action-btn view-btn" onclick="viewFile('Photo1.jpg')">View</button>
+          <button class="action-btn delete-btn" onclick="deleteFile('Photo1.jpg', this)">Delete</button>
+        </td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Report.pdf</td>
+        <td>
+          <button class="action-btn view-btn" onclick="viewFile('Report.pdf')">View</button>
+          <button class="action-btn delete-btn" onclick="deleteFile('Report.pdf', this)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+  <script>
+    function logout() {
+      const res = fetch('/logout', { method: 'POST' });
+      res.then(response => {
+        if (response.ok) window.location.href = '/';
+      });
+    }
+
+    let accessedFiles = [];
+
+function logAttack(action, filename) {
+    accessedFiles.push({ action, filename, timestamp: new Date().toISOString() });
+
+    fetch('/log-attack', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, filename, timestamp: new Date().toISOString() })
+    }).catch(err => console.error("Logging error:", err));
+}
+
+    function viewFile(filename) {
+        logAttack('view', filename); // Log the view action
+        const filePath = `files/fake/${filename}`;
+        window.open(filePath, '_blank');
+    }
+
+    function deleteFile(filename, btnElement) {
+        const confirmation = confirm(`Are you sure you want to delete the file: ${filename}?`);
+        if (confirmation) {
+            logAttack('delete', filename); // Log the delete action
+            const row = btnElement.closest('tr');
+            row.remove();
+            alert(`File ${filename} has been deleted.`);
+        }
+    }
+
+    window.addEventListener('beforeunload', function() {
+    // navigator.sendBeacon('/honeypot-exit');
+    navigator.sendBeacon('/honeypot-exit', JSON.stringify({ accessedFiles }));
+});
+
+
+  </script>
+</body>
+</html>

