@@ -77,8 +77,8 @@ SQL Injection Model: Trained on a dataset of database queries to spot malicious 
 Installation
 Bash
 
-# (Add your installation instructions here)
-# Example:
+Installation Process
+
 # 1. Clone the repo
 git clone https://github.com/ramshahane/Shadow-Sentinal.git
 
